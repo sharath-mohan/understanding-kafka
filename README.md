@@ -5,17 +5,32 @@
 ### creating Zookeeper container
 
 ```sh
-docker run --name zookeeper -p 2181:2181 zookeeper
+docker run -d \
+--net=host \
+--name=zookeeper \
+-e ZOOKEEPER_CLIENT_PORT=32181 \
+-e ZOOKEEPER_TICK_TIME=2000 \
+-e ZOOKEEPER_SYNC_LIMIT=2 \
+confluentinc/cp-zookeeper:7.3.1
 ```
 
 ### creating kafka contrainer
 
 ```sh
-docker run -p 9092:9092 --name kafka  -e KAFKA_ZOOKEEPER_CONNECT=scarlett:2181 -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://scarlett:9092 -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 -d confluentinc/cp-kafka
+docker run -d \
+    --net=host \
+    --name=kafka \
+    -e KAFKA_ZOOKEEPER_CONNECT=localhost:32181 \
+    -e KAFKA_ADVERTISED_LISTENERS=PLAINTEXT://localhost:29092 \
+    -e KAFKA_BROKER_ID=2 \
+    -e KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR=1 \
+    confluentinc/cp-kafka:7.3.1
 
 ```
 
 by default in spins up 3 brokers, spin up 1
+
+> https://docs.confluent.io/platform/current/installation/docker/config-reference.html#required-zk-settings
 
 ## Whats the project about?
 
